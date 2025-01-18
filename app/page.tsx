@@ -1,12 +1,15 @@
 'use client';
 
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
+import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItem from "@mui/material/ListItem";
 import ListItemText from '@mui/material/ListItemText';
+import MobileStepper from '@mui/material/MobileStepper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { useState } from 'react';
@@ -106,6 +109,32 @@ function FlashCard({ data }: { data: WordEntry }) {
   )
 }
 
+function FlashCardDraw({ data }: { data: WordEntry[] }) {
+  const [index, setIndex] = useState(0);
+  return (
+    <Stack direction="column">
+      <FlashCard data={data[index]} />
+      <MobileStepper
+        variant="text"
+        steps={data.length}
+        position="static"
+        activeStep={index}
+        nextButton={
+          <Button
+            size="small"
+            onClick={() => setIndex(index + 1)}
+            disabled={index === data.length - 1}
+          >
+            Next
+            <KeyboardArrowRightIcon />
+          </Button>
+        }
+        backButton={null}
+      />
+    </Stack>
+  )
+}
+
 export default function Home() {
   const [data, setData] = useState<WordEntry[] | null>(null);
   const [loading, setLoading] = useState(false);
@@ -121,7 +150,7 @@ export default function Home() {
 
   return (
     <Stack direction="column" className="items-center justify-center flex flex-col h-screen w-screen">
-      {data ? <FlashCard data={data[0]} /> :
+      {data ? <FlashCardDraw data={data} /> :
         <Stack direction="row" className="flex items-center">
           <IconButton loading={loading} onClick={fetchData}>
             <PlayCircleOutlineIcon />
