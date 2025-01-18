@@ -109,8 +109,17 @@ function FlashCard({ data }: { data: WordEntry }) {
   )
 }
 
-function FlashCardDraw({ data }: { data: WordEntry[] }) {
+function FlashCardDraw({ data, onFinish }: { data: WordEntry[], onFinish: () => void }) {
   const [index, setIndex] = useState(0);
+
+  function handleNextButtonClick() {
+    if (index == data.length - 1) {
+      onFinish();
+    } else {
+      setIndex(index + 1);
+    }
+  }
+
   return (
     <Stack direction="column">
       <FlashCard data={data[index]} />
@@ -122,10 +131,9 @@ function FlashCardDraw({ data }: { data: WordEntry[] }) {
         nextButton={
           <Button
             size="small"
-            onClick={() => setIndex(index + 1)}
-            disabled={index === data.length - 1}
+            onClick={handleNextButtonClick}
           >
-            Next
+            {index == data.length - 1 ? "Finish" : "Next"}
             <KeyboardArrowRightIcon />
           </Button>
         }
@@ -138,6 +146,7 @@ function FlashCardDraw({ data }: { data: WordEntry[] }) {
 export default function Home() {
   const [data, setData] = useState<WordEntry[] | null>(null);
   const [loading, setLoading] = useState(false);
+  const [finished, setFinished] = useState(false);
 
   const fetchData = async () => {
     setLoading(true);
@@ -150,7 +159,9 @@ export default function Home() {
 
   return (
     <Stack direction="column" className="items-center justify-center flex flex-col h-screen w-screen">
-      {data ? <FlashCardDraw data={data} /> :
+      {data ? finished ?
+        <WordList data={data} /> :
+        <FlashCardDraw data={data} onFinish={() => setFinished(true)} /> :
         <Stack direction="row" className="flex items-center">
           <IconButton loading={loading} onClick={fetchData}>
             <PlayCircleOutlineIcon />
