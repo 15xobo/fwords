@@ -1,6 +1,8 @@
 'use client';
 
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
 import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItem from "@mui/material/ListItem";
@@ -53,7 +55,7 @@ function parseSentence(sentence: string): ThreePartSentence {
 }
 
 function Sentence({ sentence }: { sentence: ThreePartSentence }) {
-  return  (
+  return (
     <span>
       <Typography component="span">{sentence.prefix}</Typography>
       <Typography component="span" color="error">{sentence.word}</Typography>
@@ -83,6 +85,27 @@ function WordList({ data }: { data: WordEntry[] }) {
   );
 }
 
+function FlashCard({ data }: { data: WordEntry }) {
+  const [flipped, setFlipped] = useState(false);
+
+  const sentence = parseSentence(data.sentence);
+  const translatedSentence = parseSentence(data.sentence_translation);
+
+  return (
+    <Card
+      className='w-96 h-96 flex items-center'
+      onClick={() => setFlipped(!flipped)}
+    >
+      <CardContent sx={{ inlineSize: '100%', textAlign: 'center' }}>
+        <Sentence sentence={flipped ? sentence : { ...sentence, word: "?".repeat(sentence.word.length) }} />
+        <br />
+        <br />
+        <Sentence sentence={translatedSentence} />
+      </CardContent>
+    </Card>
+  )
+}
+
 export default function Home() {
   const [data, setData] = useState<WordEntry[] | null>(null);
   const [loading, setLoading] = useState(false);
@@ -98,7 +121,7 @@ export default function Home() {
 
   return (
     <Stack direction="column" className="items-center justify-center flex flex-col h-screen w-screen">
-      {data ? <WordList data={data} /> :
+      {data ? <FlashCard data={data[0]} /> :
         <Stack direction="row" className="flex items-center">
           <IconButton loading={loading} onClick={fetchData}>
             <PlayCircleOutlineIcon />
