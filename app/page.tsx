@@ -45,6 +45,26 @@ function Sentence({ sentence }: { sentence: string }) {
   );
 }
 
+function WordList({ data }: { data: WordEntry[] }) {
+  return (
+    <List>
+      {data.map((item, index) => (
+        <ListItem key={index}>
+          <ListItemText
+            primary={item["word"] + ' ' + item["word_translation"]}
+            secondary={
+              <div>
+                <Sentence sentence={item["sentence"]} />
+                <Sentence sentence={item["sentence_translation"]} />
+              </div>
+            }
+          />
+        </ListItem>
+      ))}
+    </List>
+  );
+}
+
 export default function Home() {
   const [data, setData] = useState<WordEntry[] | null>(null);
   const [loading, setLoading] = useState(false);
@@ -60,22 +80,7 @@ export default function Home() {
 
   return (
     <Stack direction="column" className="items-center justify-center flex flex-col h-screen w-screen">
-      {data ?
-        <List>
-          {data.map((item, index) => (
-            <ListItem key={index}>
-              <ListItemText
-                primary={item["word"] + ' ' + item["word_translation"]}
-                secondary={
-                  <div>
-                    <Sentence sentence={item["sentence"]} />
-                    <Sentence sentence={item["sentence_translation"]} />
-                  </div>
-                }
-              />
-            </ListItem>
-          ))}
-        </List> :
+      {data ? <WordList data={data} /> :
         <Stack direction="row" className="flex items-center">
           <IconButton loading={loading} onClick={fetchData}>
             <PlayCircleOutlineIcon />
