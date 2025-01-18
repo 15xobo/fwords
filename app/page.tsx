@@ -2,6 +2,7 @@
 
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
+import ReplayIcon from '@mui/icons-material/Replay';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -160,7 +161,10 @@ export default function Home() {
   return (
     <Stack direction="column" className="items-center justify-center flex flex-col h-screen w-screen">
       {data ? finished ?
-        <WordList data={data} /> :
+        <div>
+          <WordList data={data} />
+          <Button startIcon={<ReplayIcon />} onClick={() => setFinished(false)}>Replay</Button>
+        </div> :
         <FlashCardDraw data={data} onFinish={() => setFinished(true)} /> :
         <Stack direction="row" className="flex items-center">
           <IconButton loading={loading} onClick={fetchData}>
