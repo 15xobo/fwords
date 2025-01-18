@@ -6,6 +6,7 @@ import List from '@mui/material/List';
 import ListItem from "@mui/material/ListItem";
 import ListItemText from '@mui/material/ListItemText';
 import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 
 interface WordEntry {
@@ -31,6 +32,19 @@ async function getData(): Promise<WordEntry[]> {
   ];
 }
 
+const wordPartRe = /^(.*)\[\[(.*)\]\](.*)$/;
+
+function Sentence({ sentence }: { sentence: string }) {
+  const matchResult = sentence.match(wordPartRe);
+  return matchResult && matchResult?.length == 4 && (
+    <div>
+      <Typography display="inline">{matchResult[1]}</Typography>
+      <Typography display="inline" color="error">{matchResult[2]}</Typography>
+      <Typography display="inline">{matchResult[3]}</Typography>
+    </div>
+  );
+}
+
 export default function Home() {
   const [data, setData] = useState<WordEntry[] | null>(null);
   const [loading, setLoading] = useState(false);
@@ -52,7 +66,12 @@ export default function Home() {
             <ListItem key={index}>
               <ListItemText
                 primary={item["word"] + ' ' + item["word_translation"]}
-                secondary={item["sentence"] + '\n' + item["sentence_translation"]}
+                secondary={
+                  <div>
+                    <Sentence sentence={item["sentence"]} />
+                    <Sentence sentence={item["sentence_translation"]} />
+                  </div>
+                }
               />
             </ListItem>
           ))}
