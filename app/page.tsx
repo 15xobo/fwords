@@ -16,6 +16,12 @@ interface WordEntry {
   sentence_translation: string;
 }
 
+interface ThreePartSentence {
+  prefix: string;
+  word: string;
+  suffix: string;
+}
+
 async function getData(): Promise<WordEntry[]> {
   await new Promise(r => setTimeout(r, 2000));
   return [
@@ -34,14 +40,25 @@ async function getData(): Promise<WordEntry[]> {
 
 const wordPartRe = /^(.*)\[\[(.*)\]\](.*)$/;
 
-function Sentence({ sentence }: { sentence: string }) {
+function parseSentence(sentence: string): ThreePartSentence {
   const matchResult = sentence.match(wordPartRe);
-  return matchResult && matchResult?.length == 4 && (
-    <div>
-      <Typography display="inline">{matchResult[1]}</Typography>
-      <Typography display="inline" color="error">{matchResult[2]}</Typography>
-      <Typography display="inline">{matchResult[3]}</Typography>
-    </div>
+  return matchResult && matchResult?.length == 4 ?
+    {
+      prefix: matchResult[1],
+      word: matchResult[2],
+      suffix: matchResult[3]
+    }
+    :
+    { prefix: '', word: '', suffix: '' };
+}
+
+function Sentence({ sentence }: { sentence: ThreePartSentence }) {
+  return  (
+    <span>
+      <Typography component="span">{sentence.prefix}</Typography>
+      <Typography component="span" color="error">{sentence.word}</Typography>
+      <Typography component="span">{sentence.suffix}</Typography>
+    </span>
   );
 }
 
@@ -53,10 +70,11 @@ function WordList({ data }: { data: WordEntry[] }) {
           <ListItemText
             primary={item["word"] + ' ' + item["word_translation"]}
             secondary={
-              <div>
-                <Sentence sentence={item["sentence"]} />
-                <Sentence sentence={item["sentence_translation"]} />
-              </div>
+              <span>
+                <Sentence sentence={parseSentence(item["sentence"])} />
+                <br />
+                <Sentence sentence={parseSentence(item["sentence_translation"])} />
+              </span>
             }
           />
         </ListItem>
