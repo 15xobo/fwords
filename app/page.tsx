@@ -110,44 +110,51 @@ function FlashCard({ data }: { data: WordEntry }) {
   )
 }
 
-function FlashCardDraw({ data, onFinish }: { data: WordEntry[], onFinish: () => void }) {
+function FlashCardDraw({ data }: { data: WordEntry[] }) {
+  const [viewing, setViewing] = useState(false);
   const [index, setIndex] = useState(0);
 
   function handleNextButtonClick() {
     if (index == data.length - 1) {
-      onFinish();
+      setViewing(true);
+      setIndex(0);
     } else {
       setIndex(index + 1);
     }
   }
 
   return (
-    <Stack direction="column">
-      <FlashCard data={data[index]} />
-      <MobileStepper
-        variant="text"
-        steps={data.length}
-        position="static"
-        activeStep={index}
-        nextButton={
-          <Button
-            size="small"
-            onClick={handleNextButtonClick}
-          >
-            {index == data.length - 1 ? "Finish" : "Next"}
-            <KeyboardArrowRightIcon />
-          </Button>
-        }
-        backButton={null}
-      />
-    </Stack>
+    viewing ?
+      <Stack direction="column">
+        <WordList data={data} />
+        <Button startIcon={<ReplayIcon />} onClick={() => setViewing(false)}>Replay</Button>
+      </Stack>
+      :
+      <Stack direction="column">
+        <FlashCard data={data[index]} />
+        <MobileStepper
+          variant="text"
+          steps={data.length}
+          position="static"
+          activeStep={index}
+          nextButton={
+            <Button
+              size="small"
+              onClick={handleNextButtonClick}
+            >
+              {index == data.length - 1 ? "Finish" : "Next"}
+              <KeyboardArrowRightIcon />
+            </Button>
+          }
+          backButton={null}
+        />
+      </Stack>
   )
 }
 
 export default function Home() {
   const [data, setData] = useState<WordEntry[] | null>(null);
   const [loading, setLoading] = useState(false);
-  const [finished, setFinished] = useState(false);
 
   const fetchData = async () => {
     setLoading(true);
@@ -160,12 +167,8 @@ export default function Home() {
 
   return (
     <Stack direction="column" className="items-center justify-center flex flex-col h-screen w-screen">
-      {data ? finished ?
-        <div>
-          <WordList data={data} />
-          <Button startIcon={<ReplayIcon />} onClick={() => setFinished(false)}>Replay</Button>
-        </div> :
-        <FlashCardDraw data={data} onFinish={() => setFinished(true)} /> :
+      {data ?
+        <FlashCardDraw data={data} /> :
         <Stack direction="row" className="flex items-center">
           <IconButton loading={loading} onClick={fetchData}>
             <PlayCircleOutlineIcon />
