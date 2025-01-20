@@ -47,8 +47,7 @@ export default function AppBar({ session }: { session: SessionData | null }) {
                     </Box>
                     :
                     <Box>
-                        <Button LinkComponent={Link} href="/auth/login?screen_hint=signup" color="inherit">Sign up</Button>
-                        <Button LinkComponent={Link} href="/auth/login" color="inherit">Log in</Button>
+                        <Button href="/auth/login" color="inherit">Log in with Google</Button>
                     </Box>}
             </Toolbar>
         </MuiAppBar>
