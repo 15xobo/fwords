@@ -17,12 +17,14 @@ export default async function RootLayout({
 }>) {
   const session = await auth0.getSession();
 
+  const dateToday = new Date().toISOString().substring(0, 10);
+
   return (
     <html lang="en">
       <body>
         <AppRouterCacheProvider>
           <Container className="h-screen w-screen items-center justify-center flex">
-            <AppBar session={session} />
+            <AppBar session={session} dates={[dateToday, "2024-01-20"]}/>
             {children}
           </Container>
         </AppRouterCacheProvider>
