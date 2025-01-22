@@ -24,7 +24,7 @@ export default async function RootLayout({
     <html lang="en">
       <body>
         <AppRouterCacheProvider>
-          <AppBar session={session} dates={[dateToday, "2024-01-20"]} />
+          <AppBar session={session} />
           <Stack direction="column" className="w-screen h-screen flex">
             <AppBarSpacer />
             <div className="w-screen flex-1 justify-center items-center flex">

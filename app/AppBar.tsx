@@ -20,7 +20,8 @@ import { styled } from "@mui/material/styles";
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getUserHistoryDates } from "./actions";
 
 const DrawerHeader = styled('div')(({ theme }) => ({
     display: 'flex',
@@ -32,9 +33,25 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 
-export default function AppBar({ session, dates }: { session: SessionData | null, dates: string[] }) {
+export default function AppBar({ session }: { session: SessionData | null }) {
+    const [userHistoryDates, setUserHistoryDates] = useState<null | string[]>(null);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
+    const user = session?.user.email;
+    useEffect(() => {
+        if (user) {
+            getUserHistoryDates(user).then((dates) => {
+                const dateToday = new Date().toISOString().substring(0, 10);
+                if (dates.length !== 0 && dates[0] === dateToday) {
+                    dates = dates.slice(1, dates.length);
+                }
+                setUserHistoryDates(dates);
+            });
+        }
+        return () => {
+            setUserHistoryDates(null);
+        }
+    }, [user]);
 
     const handleOpenDrawer = () => {
         setDrawerOpen(true);
@@ -51,11 +68,6 @@ export default function AppBar({ session, dates }: { session: SessionData | null
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     };
-
-    const dateToday = new Date().toISOString().substring(0, 10);
-    if (dates.length !== 0 && dates[0] === dateToday) {
-        dates = dates.slice(1, dates.length);
-    }
 
     return (
         <MuiAppBar position="fixed" >
@@ -108,7 +120,7 @@ export default function AppBar({ session, dates }: { session: SessionData | null
                     <ListItemButton key="today">
                         <ListItemText primary="Today" />
                     </ListItemButton>
-                    {dates.map((date) => (
+                    {userHistoryDates && userHistoryDates.map((date) => (
                         <ListItemButton key={date}>
                             <ListItemText primary={date} />
                         </ListItemButton>
