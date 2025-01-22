@@ -70,6 +70,7 @@ export default function AppBar({ session, dates }: { session: SessionData | null
                         <MenuIcon />
                     </IconButton>
                 </Box>
+                <Link href="/"><Button color="inherit">FWords</Button></Link>
                 <Box className="grow" />
                 {session ?
                     <Box>
