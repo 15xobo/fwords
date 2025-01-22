@@ -59,7 +59,7 @@ export default function AppBar({ session, dates }: { session: SessionData | null
 
     return (
         <MuiAppBar position="fixed" >
-            <Toolbar className={drawerOpen ? "ml-60" : ""}>
+            <Toolbar className={drawerOpen ? "ml-40" : ""}>
                 <Box className={drawerOpen ? "hidden" : ""}>
                     <IconButton
                         color="inherit"
@@ -93,7 +93,7 @@ export default function AppBar({ session, dates }: { session: SessionData | null
                         <Button href="/auth/login" color="inherit">Log in with Google</Button>
                     </Box>}
             </Toolbar>
-            <Drawer PaperProps={{ className: "w-60" }}
+            <Drawer PaperProps={{ className: "w-40" }}
                 variant="persistent"
                 anchor="left"
                 open={drawerOpen}
