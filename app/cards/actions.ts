@@ -1,3 +1,5 @@
+'use server';
+
 import { mongo } from "@/lib/mongo";
 
 export interface WordEntry {
@@ -19,7 +21,7 @@ Do not print any other lines. \
 Do not print empty lines.\
 Make sure to use double brackets.";
 
-async function generateData(): Promise<WordEntry[]> {
+export async function generateData(user: string) {
     const response = await fetch(
         "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key="
         + process.env.GENIMI_API_KEY!,
@@ -56,24 +58,19 @@ async function generateData(): Promise<WordEntry[]> {
             sentence_translation: sentenceTranslation,
         });
     }
-    return words;
+
+    const date = new Date().toISOString().substring(0, 10);
+    const updateResult = await mongo.db("fwords").collection("user_words")
+        .updateOne({ user, date }, { $setOnInsert: { words: words } }, { upsert: true });
+    if (updateResult.upsertedCount !== 1) {
+        throw "Failed to generate data";
+    }
 }
 
-export async function getData(userId: string, date: string): Promise<WordEntry[] | null> {
-    const canonicalDate = date === "today" ? new Date().toISOString().substring(0, 10) : date;
-    const doc = await mongo.db("fwords").collection("user_words").findOne({ user: userId, date: canonicalDate });
+export async function getData(user: string, date: string): Promise<WordEntry[] | null> {
+    const doc = await mongo.db("fwords").collection("user_words").findOne({ user, date });
     if (doc) {
         return doc.words;
     }
-    if (date !== "today") {
-        return null;
-    }
-
-    const data = await generateData();
-    const updateResult = await mongo.db("fwords").collection("user_words")
-        .updateOne({ user: userId, date: canonicalDate }, { $setOnInsert: { words: data } }, { upsert: true });
-    if (updateResult.modifiedCount === 1) {
-        throw "Failed to generate data"
-    }
-    return data;
+    return null;
 }
