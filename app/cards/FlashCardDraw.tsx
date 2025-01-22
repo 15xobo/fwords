@@ -13,13 +13,7 @@ import MobileStepper from '@mui/material/MobileStepper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { useState } from 'react';
-
-export interface WordEntry {
-  word: string;
-  word_translation: string;
-  sentence: string;
-  sentence_translation: string;
-}
+import { WordEntry } from "./actions";
 
 interface ThreePartSentence {
   prefix: string;
