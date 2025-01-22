@@ -23,7 +23,7 @@ export default async function CardsPage({
 
   return (
     <Stack direction="column" className="items-center">
-      <FlashCardDraw data={data} />
+      <FlashCardDraw key={date} data={data} />
     </Stack>
   )
 }

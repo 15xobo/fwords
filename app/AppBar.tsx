@@ -117,13 +117,18 @@ export default function AppBar({ session }: { session: SessionData | null }) {
                 </DrawerHeader>
                 <Divider />
                 <List subheader={<ListSubheader>History</ListSubheader>}>
-                    <ListItemButton key="today">
-                        <ListItemText primary="Today" />
-                    </ListItemButton>
-                    {userHistoryDates && userHistoryDates.map((date) => (
-                        <ListItemButton key={date}>
-                            <ListItemText primary={date} />
+                    <Link key="today" href={"/cards?date=today"}>
+                        <ListItemButton>
+                            <ListItemText primary="Today" />
                         </ListItemButton>
+                    </Link>
+                    {userHistoryDates && userHistoryDates.map((date) => (
+                        <Link key={date} href={"/cards?date=" + date}>
+                            <ListItemButton>
+                                <ListItemText primary={date} />
+                            </ListItemButton>
+                        </Link>
+
                     ))}
                 </List>
             </Drawer>
