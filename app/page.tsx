@@ -7,7 +7,7 @@ import Link from 'next/link';
 export default function Home() {
   return (
     <Stack direction="column" className="items-center">
-      <Link href="/cards">
+      <Link href="/cards?date=today">
         <IconButton size="large" color="primary">
           <PlayCircleOutlineIcon fontSize="large" />
         </IconButton>
