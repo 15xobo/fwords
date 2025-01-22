@@ -8,7 +8,7 @@ export default function LoadingPage() {
             <CircularProgress />
             <br />
             <Typography variant="h6">
-                Loading...
+                Preparing...
             </Typography>
         </Stack>
     );
