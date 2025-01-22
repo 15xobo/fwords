@@ -72,16 +72,14 @@ function WordList({ data }: { data: WordEntry[] }) {
   );
 }
 
-function FlashCard({ data }: { data: WordEntry }) {
-  const [flipped, setFlipped] = useState(false);
-
+function FlashCard({ data, flipped, onClick }: { data: WordEntry, flipped: boolean, onClick: () => void }) {
   const sentence = parseSentence(data.sentence);
   const translatedSentence = parseSentence(data.sentence_translation);
 
   return (
     <Card
       className='w-96 h-96 flex items-center'
-      onClick={() => setFlipped(!flipped)}
+      onClick={onClick}
     >
       <CardContent sx={{ inlineSize: '100%', textAlign: 'center' }}>
         <Sentence sentence={flipped ? sentence : { ...sentence, word: "?".repeat(sentence.word.length) }} />
@@ -96,8 +94,10 @@ function FlashCard({ data }: { data: WordEntry }) {
 export default function FlashCardDraw({ data }: { data: WordEntry[] }) {
   const [viewing, setViewing] = useState(false);
   const [index, setIndex] = useState(0);
+  const [flipped, setFlipped] = useState(false);
 
   function handleNextButtonClick() {
+    setFlipped(false);
     if (index == data.length - 1) {
       setViewing(true);
       setIndex(0);
@@ -114,7 +114,11 @@ export default function FlashCardDraw({ data }: { data: WordEntry[] }) {
       </Stack>
       :
       <Stack direction="column">
-        <FlashCard data={data[index]} />
+        <FlashCard
+          data={data[index]}
+          flipped={flipped}
+          onClick={() => setFlipped(!flipped)}
+        />
         <MobileStepper
           variant="text"
           steps={data.length}
