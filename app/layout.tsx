@@ -1,8 +1,9 @@
 import { auth0 } from "@/lib/auth0";
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
-import Container from '@mui/material/Container';
+import Stack from '@mui/material/Stack';
 import type { Metadata } from "next";
 import AppBar from "./AppBar";
+import AppBarSpacer from "./AppBarSpacer";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -23,10 +24,13 @@ export default async function RootLayout({
     <html lang="en">
       <body>
         <AppRouterCacheProvider>
-          <Container className="h-screen w-screen items-center justify-center flex">
-            <AppBar session={session} dates={[dateToday, "2024-01-20"]}/>
-            {children}
-          </Container>
+          <AppBar session={session} dates={[dateToday, "2024-01-20"]} />
+          <Stack direction="column" className="w-screen h-screen flex">
+            <AppBarSpacer />
+            <div className="w-screen flex-1 justify-center items-center flex">
+              {children}
+            </div>
+          </Stack>
         </AppRouterCacheProvider>
       </body>
     </html>
