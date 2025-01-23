@@ -118,7 +118,7 @@ export default function AppBar({ session }: { session: SessionData | null }) {
                 <Divider />
                 <List subheader={<ListSubheader>History</ListSubheader>}>
                     <Link key="today" href={"/cards?date=today"}>
-                        <ListItemButton>
+                        <ListItemButton onClick={handleCloseDrawer}>
                             <ListItemText primary="Today" />
                         </ListItemButton>
                     </Link>
