@@ -9,19 +9,30 @@ export interface WordEntry {
     sentence_translation: string;
 }
 
-const prompt = "\
-Select a 10 Chinese words at HSK level 4. \
-For each word, do the following steps. \
-Make a sentence with the word. \
-Print the word only in the first line. \
-Print its English translation in the second line. \
-Print the sentence with the word quoted with double square brackets in the third line. \
-rint the English translation of the sentence with the translation of the word quoted with double square brackets in the fourth line. \
-Do not print any other lines. \
-Do not print empty lines.\
-Make sure to use double brackets.";
+const prompt_prefix = "\
+For each of the 10 Japanese words in [\
+";
+
+const prompt_suffix = "\
+], print 3 lines as described below: \
+1, print an English translation. \
+2: print a sentence made with the word, the word quoted with double square brackets (\"[[]]\"). \
+3: an English translation of the sentence, the translation of the word quoted with double square brackets (\"[[]]\"). \
+No other lines in your answer so 30 lines in total. \
+";
 
 export async function generateData(user: string) {
+    const selectedWords = await mongo.db("fwords").collection("words-jlpt-n5")
+        .aggregate([
+            { $sample: { size: 10 } },
+            { $project: { word: true, _id: false } },
+        ])
+        .map((doc) => doc.word)
+        .toArray();
+
+    const prompt = prompt_prefix + selectedWords.map((word) => "\"" + word + "\"").join(", ") + prompt_suffix;
+    console.log(prompt);
+
     const response = await fetch(
         "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key="
         + process.env.GENIMI_API_KEY!,
@@ -39,14 +50,14 @@ export async function generateData(user: string) {
     const words: WordEntry[] = [];
     const text = responseBody.candidates[0].content.parts[0].text
     const lines = text.split('\n').map((line: string) => line.trim()).filter((line: string) => line.length > 0);
-    if (lines.length != 40) {
+    if (lines.length != 30) {
         throw new Error("Generated bad data. " + lines.length + " lines. text: " + text);
     }
-    for (let i = 0; i < 40; i += 4) {
-        const word = lines[i];
-        const wordTranslation = lines[i + 1];
-        const sentence = lines[i + 2];
-        const sentenceTranslation = lines[i + 3];
+    for (let i = 0; i < 10; ++i) {
+        const word = selectedWords[i];
+        const wordTranslation = lines[3 * i];
+        const sentence = lines[3 * i + 1];
+        const sentenceTranslation = lines[3 * i + 2];
         const wordIndex = sentence.indexOf("[[" + word + "]]");
         if (wordIndex === -1) {
             throw new Error("Generated bad data. " + wordIndex + " " + word + " " + wordTranslation + " " + sentence + " " + sentenceTranslation);
