@@ -39,7 +39,7 @@ export default function GenerationForm({
     return (
         <Stack className="items-center">
             <Typography variant="h6">
-                You don't have word data for today.
+                You don&apos;t have word data for today.
             </Typography>
             <br />
             <Button variant="contained" onClick={handleGeneration}>

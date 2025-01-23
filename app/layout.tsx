@@ -18,8 +18,6 @@ export default async function RootLayout({
 }>) {
   const session = await auth0.getSession();
 
-  const dateToday = new Date().toISOString().substring(0, 10);
-
   return (
     <html lang="en">
       <body>
