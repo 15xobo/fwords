@@ -124,7 +124,7 @@ export default function AppBar({ session }: { session: SessionData | null }) {
                     </Link>
                     {userHistoryDates && userHistoryDates.map((date) => (
                         <Link key={date} href={"/cards?date=" + date}>
-                            <ListItemButton>
+                            <ListItemButton onClick={handleCloseDrawer}>
                                 <ListItemText primary={date} />
                             </ListItemButton>
                         </Link>
