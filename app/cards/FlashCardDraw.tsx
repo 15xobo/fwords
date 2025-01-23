@@ -21,7 +21,7 @@ interface ThreePartSentence {
   suffix: string;
 }
 
-const wordPartRe = /^(.*)\[\[(.*)\]\](.*)$/;
+const wordPartRe = /^(.*)\[(.*)\](.*)$/;
 
 function parseSentence(sentence: string): ThreePartSentence {
   const matchResult = sentence.match(wordPartRe);

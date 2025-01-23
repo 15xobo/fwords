@@ -14,10 +14,10 @@ For each of the 10 Japanese words in [\
 ";
 
 const prompt_suffix = "\
-], print 3 lines as described below: \
-1, print an English translation. \
-2: print a sentence made with the word, the word quoted with double square brackets (\"[[]]\"). \
-3: an English translation of the sentence, the translation of the word quoted with double square brackets (\"[[]]\"). \
+], print 3 lines literaly as described below: \
+The first line is a sentence made with the word, quoting the word with square brackets. \
+The second line is an English translation of the word. \
+The third line is an English translation of the sentence, quoting the translation of the word with square brackets. \
 No other lines in your answer so 30 lines in total. \
 ";
 
@@ -55,10 +55,10 @@ export async function generateData(user: string) {
     }
     for (let i = 0; i < 10; ++i) {
         const word = selectedWords[i];
-        const wordTranslation = lines[3 * i];
-        const sentence = lines[3 * i + 1];
+        const sentence = lines[3 * i];
+        const wordTranslation = lines[3 * i + 1];
         const sentenceTranslation = lines[3 * i + 2];
-        const wordIndex = sentence.indexOf("[[" + word + "]]");
+        const wordIndex = sentence.indexOf("[" + word + "]");
         if (wordIndex === -1) {
             throw new Error("Generated bad data. " + wordIndex + " " + word + " " + wordTranslation + " " + sentence + " " + sentenceTranslation);
         }
